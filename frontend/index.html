@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sushiwitter</title>
+    <!-- Add some CSS to change client UI -->
+    <style>
+body {
+    font-family: 'Raleway', sans-serif;
+    /*font-family: 'Cat Cat', sans-serif;
+    font-family: 'Scribbler', sans-serif;*/
+    background-color: rgb(204, 204, 206);
+    font-size: 18px;
+}
+*, *::before, *::after {
+    margin: 20;
+    padding: 10;
+    box-sizing: border-box;
+}
+
+:root {
+    --clr-blue: rgb(0, 123, 255);
+    --clr-dark-blue: #091759;
+    --clr-bark-bg: rgb(204, 204, 206);
+}
+
+header {
+    width: min(90%, 860px);
+    margin: 2em auto;
+    text-align: center;
+}
+
+main {
+    width: min(90%, 860px);
+    margin: 5em auto;
+}
+
+.tweet_form {
+    width: min(100%, 600px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tweet_form input {
+    padding: 20px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.tweet_form textarea {
+    resize: vertical;
+    padding: 20px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.sushitweet textarea {
+    background-color: white;
+    border-radius: 0.5em;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3)
+}
+
+.tweet_form button {
+    border-radius: 0.3rem;
+    background-color: var(--clr-blue);
+    color: white;
+    font-weight: 700;
+    font-size: 1.25rem;
+    padding: 1em 1.5em;
+    cursor: pointer;
+    margin: 0 auto;
+    transition: background-color .3s ease;
+    text-transform: uppercase;
+}
+
+.tweet_form button:hover {
+    background-color: var(--clr-dark-blue);
+}
+
+.sushitweet_container {
+    margin: 4rem auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(150px, 1fr);
+    gap: 25px;
+}
+
+.sushitweet {
+    padding: 10px;
+}
+
+.sushitweet h3 {
+    cursor: pointer;
+    margin-bottom: .5em;
+}
+
+.sushitweet_content {
+    background-color: white;
+    border-radius: 0.5em;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3)
+}
+
+.sushitweet_content .date {
+    display: block;
+    text-align: right;
+    font-size: .8rem;
+    opacity: .75;
+}
+
+.tag-link { 
+    color: var(--clr-blue);
+    cursor: pointer;
+}
+
+.user-link {
+    color: var(--clr-blue);
+    cursor: pointer;
+}
+    </style>
+    <script>
+        // define the callAPI function that takes a first name and last name as parameters
+        var callAPI = (Username,Sushitweet)=>{
+            // instantiate a headers object
+            var myHeaders = new Headers();
+            // add content type header to object
+            myHeaders.append("Content-Type", "application/json");
+            // using built in JSON utility package turn object to string and store in a variable
+            var raw = JSON.stringify({"name":Username,"tweet":Sushitweet});
+            // create a JSON object with parameters for API call and store in a variable
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            // make API call with parameters and use promises to get response
+            fetch("https://wb3gfu865c.execute-api.us-east-2.amazonaws.com/dev/tweet", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                    var tweets = document.getElementById('sushitweets');
+                    tweets.value = JSON.parse(result).body;
+                    var username = document.getElementById('usernameID');
+                    username.innerHTML = Username;
+            })
+            .catch(error => console.log('error', error));
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>sushiwitter - Twitter dedicated to my cat Sushi</h1>
+        <img src="sushi.jpg" alt="my cat sushi"
+        width="150" 
+        height="200">
+                
+    </header>
+   <main>
+    <div class="tweet_form">
+            <label for="">Username:</label>
+            <input type="text" id = "Username" name = "Username" placeholder="Enter your name here" required>
+            <label for="">Sushitweet:</label>
+            <textarea name="content" id="content" cols="30" rows="10" maxlength="140" 
+            placeholder="tweet what your heart desires -- in 140 characters or less" required></textarea>
+            <button onclick="callAPI(document.getElementById('Username').value,document.getElementById('content').value)">Send sushitweet!</button>
+            <h3 id="usernameID">Username:</h3>
+            <textarea id="sushitweets" name="sushitweets" rows="10" cols="50"></textarea>
+    </div>
+        <div class="sushitweet_container">
+            <div class="sushitweet">
+                <h3>Sushi</h3>
+                <div class="sushitweet_content">
+                <p> Decided to bring back a dead rat from the backyard today. 
+                    Unfortunately the humans did not appreciate my efforts <span class="tag-link">#hashtagMeow</span>  </p>
+                <span class="date">9/7/2023</span>
+            </div>
+        </div>
+        <div class="sushitweet">
+            <h3>Sushi2</h3>
+            <div class="sushitweet_content">
+            <p> Owner hasn't fed me in 3 minutes and I am starving. This is unacceptable. <span class="user-link">@angie</span></p>
+            <span class="date">9/7/2023</span>
+        </div>
+    </div>
+    <div class="sushitweet">
+        <h3>Angie</h3>
+        <div class="sushitweet_content">
+        <p> I am not giving Sushi any more treats because he yakked it up 
+            on the carpet today & also took a dump on the stairs. He's still the cutest cat ever tho.</p>
+        <span class="date">9/7/2023</span>
+    </div>
+</div>
+
+
+</main>
+</body>
+</html>
